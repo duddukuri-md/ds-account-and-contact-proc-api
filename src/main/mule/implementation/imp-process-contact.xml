@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="imp-process-get-contact-SubFlow" doc:id="10f65956-2fb9-416a-bc8f-edd76731f2b4" >
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="b61da763-da6c-40c4-aaee-0bd4f5564366" message='#[  "contact Id -" ++ vars.contactId ++ "Start of get Contact  subflow"]'/>
+		<ee:transform doc:name="Set Request Params" doc:id="9ec168d9-0338-415a-a39e-e0825232e92e">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="apiPath"><![CDATA[%dw 2.0
+output application/java
+---
+p('account.sys.api.get.contacts.contactId.path')]]></ee:set-variable>
+				<ee:set-variable resource="dwl/contactAPIParams.dwl" variableName="contactAPIParams" />
+				</ee:variables>
+		</ee:transform>
+		<http:request doc:name="Get Account and Contact System Call" doc:id="3b457946-5da4-4dee-b196-bb333ec049c4" config-ref="datastream-account-and-contact-system-api-http-request-config" path="#[vars.apiPath]" correlationId="#[correlationId]" method="GET">
+			<error-mapping sourceType="HTTP:BAD_REQUEST" targetType="VALIDNAMES:ACCOUNTNOTFOUND" />
+			<http:headers><![CDATA[#[vars.contactAPIParams.headers]]]></http:headers>
+			<http:uri-params><![CDATA[#[vars.contactAPIParams.uriParams]]]></http:uri-params>
+			<http:response-validator>
+				<http:success-status-code-validator values="200,400" />
+			</http:response-validator>
+		</http:request>
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="f6243c65-6985-4704-93d8-9a196afa86bb" message='#[  "contact Id -" ++ vars.contactId ++ "End of get Contact  subflow"]'/>
+	</sub-flow>
+	<sub-flow name="imp-process-post-contact-SubFlow" doc:id="0da0bc0a-34c7-4259-b08b-261aa0b63f76" >
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="f03b3beb-c7e3-46aa-8442-4eb753adff0e" message='#[ "Start of post Contact  subflow"]'/>
+		<ee:transform doc:name="Set Request Params" doc:id="f3a1a977-cd7a-49af-9345-5041196d5c9a">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="apiPath"><![CDATA[%dw 2.0
+output application/java
+---
+p('account.sys.api.get.contacts.path')]]></ee:set-variable>
+				<ee:set-variable resource="dwl/contactAPIParams.dwl" variableName="contactAPIParams" />
+			</ee:variables>
+		</ee:transform>
+		<http:request doc:name="Post Account and Contact System Call" doc:id="619b6779-c9d4-477b-9d28-09022496faa8" config-ref="datastream-account-and-contact-system-api-http-request-config" path="#[vars.apiPath]" correlationId="#[correlationId]" method="POST">
+			<error-mapping sourceType="HTTP:BAD_REQUEST" targetType="VALIDNAMES:ACCOUNTNOTFOUND" />
+			<http:headers><![CDATA[#[vars.contactAPIParams.headers]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="acd63465-24c3-4a09-9dd1-14f1f53253e8" message='#[ "End of post Contact  subflow"]'/>
+	</sub-flow>
+</mule>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+  
+    <flow name="datastream-account-and-contact-process-api-main">
+        <http:listener config-ref="datastream-account-and-contact-process-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="datastream-account-and-contact-process-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="datastream-account-and-contact-process-api-console">
+        <http:listener config-ref="datastream-account-and-contact-process-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="datastream-account-and-contact-process-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\accounts\(accountId):datastream-account-and-contact-process-api-config">
+        <logger level="INFO" doc:name="Start of the flow Logger" doc:id="c411a497-afaf-420a-b17b-49d7f6afccbe" message='#[ "Start of Get Accounts based on Account Id flow"]'/>
+		<ee:transform doc:name="Account Id">
+            <ee:variables>
+                <ee:set-variable variableName="accountId">attributes.uriParams.'accountId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="imp-process-get-accounts-SubFlow" doc:id="36865b89-5bfc-480f-8329-2a83f3f1be1f" name="imp-process-get-accounts-SubFlow"/>
+		<logger level="INFO" doc:name="End of the flow Logger" doc:id="34c7a861-b857-4dcf-83e9-be92d845a1db" message='#[ "Start of Get Accounts based on Account Id flow"]'/>
+		<error-handler ref="business-error-handler" />
+    </flow>
+    <flow name="get:\contacts\(contactId):datastream-account-and-contact-process-api-config">
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="33d1c23d-bc4e-4822-b405-15ee9b684926" message='#[ "Start of Get Contacts based on Contact Id flow"]' />
+		<ee:transform doc:name="Contact Id" doc:id="8e9f7507-749d-435c-a708-8f3504006d22">
+			<ee:variables>
+				<ee:set-variable variableName="contactId"><![CDATA[attributes.uriParams.'contactId']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="imp-process-get-contact-SubFlow" doc:id="c88dca3d-b4b5-4384-993c-3702627b4390" name="imp-process-get-contact-SubFlow"/>
+		<logger level="INFO" doc:name="End of the flow Logger" doc:id="be8427f6-4431-4761-a61f-4778dee5f403" message='#[ "End of Get Contacts based on Contact Id flow"]'/>
+		<error-handler ref="business-error-handler" />
+    </flow>
+    <flow name="post:\accounts:application\json:datastream-account-and-contact-process-api-config">
+        <logger level="INFO" doc:name="Start of the flow Logger" doc:id="45d08127-9994-4798-8bcc-389c9cc9ab57" message='#[ "Start of Post Accounts flow"]' />
+		<flow-ref doc:name="imp-process-post-accounts-SubFlow" doc:id="6aa45061-67b9-400b-9503-ca4a04ffb46b" name='imp-process-post-accounts-SubFlow'/>
+		<logger level="INFO" doc:name="End of the flow Logger" doc:id="ccbf419c-e5d5-4319-ac97-de8e96e87f49" message='#["End of Post Accounts flow"]'/>
+		<error-handler ref="business-error-handler" />
+    </flow>
+    <flow name="post:\contacts:application\json:datastream-account-and-contact-process-api-config">
+		<logger level="INFO" doc:name="Start of the flow Logger" doc:id="b1f1ee2b-8911-410d-9a19-127b9fc3246d" message='#[ "Start of Post Contact flow"]' />
+		<flow-ref doc:name="imp-process-post-contact-SubFlow" doc:id="b6e58602-0771-4b3a-9cc2-6737ea0b4c47" name="imp-process-post-contact-SubFlow"/>
+		<logger level="INFO" doc:name="End of the flow Logger" doc:id="970f4478-ebf8-436e-8191-d2a771736e38" message='#[ "End of Post Contact flow"]'/>
+		<error-handler ref="business-error-handler" />
+    </flow>
+</mule>

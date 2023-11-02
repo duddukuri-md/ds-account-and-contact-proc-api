@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	
+
+    <apikit:config name="datastream-account-and-contact-process-api-config" api="resource::de6de872-b6a8-42f1-8209-d6503cd01843:datastream-account-and-contact-process-api:1.0.2:raml:zip:datastream-account-and-contact-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	 
+	   <http:listener-config name="datastream-account-and-contact-process-api-httpListenerConfig">
+        <http:listener-connection host="${http.host}" port="${http.port}" />
+    </http:listener-config>
+  
+	<http:request-config name="datastream-account-and-contact-system-api-http-request-config" doc:name="HTTP Request configuration" doc:id="26cc2f52-c8d4-4a09-83aa-76e4b34f882c" basePath="${account.sys.api.base.path}" sendCorrelationId="ALWAYS">
+		<http:request-connection protocol="${account.sys.api.protocol}" host="${account.sys.api.host}" maxConnections="${account.sys.api.max.connections}" responseBufferSize="${account.sys.api.response.buffer.size}">
+		</http:request-connection>
+	</http:request-config>
+<configuration-properties doc:name="Configuration properties" doc:id="f3daf24c-b619-46e2-a72d-c108096400a2" file="properties/app-config-${mule.env}.properties" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="37a439d5-4afb-44dc-a4c1-7541a94cfec0" file="properties/secure-config-${mule.env}.properties" key="${secure.key}" >
+	</secure-properties:config>	
+	
+	
+
+	</mule>

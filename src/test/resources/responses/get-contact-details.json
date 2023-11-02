@@ -1,0 +1,9 @@
+{
+  "ContactID": "003XXXXXXXXXXXXXXX",
+  "Name": "Jane Smith",
+  "personalEmail__c": "jane.smith@email.com",
+  "Active__c": true,
+  "BillingAddress": "456 Elm St, City, State",
+  "Description": "Sample Contact",
+  "LastModifiedDate": "2023-01-15T14:32:00Z"
+}

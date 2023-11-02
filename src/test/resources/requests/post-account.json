@@ -1,0 +1,9 @@
+{
+  "Name": "John Doe",
+  "AccountNumber": "12345",
+  "accountEmail__c": "john.doe@email.com",
+  "BillingAddress": "123 Main St, City, State",
+  "Description": "Sample Account",
+  "LastModifiedDate": "2023-01-15T14:30:00Z",
+  "Phone": "+1234567890"
+}

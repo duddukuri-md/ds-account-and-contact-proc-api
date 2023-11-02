@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="datastream-account-and-contact-process-api-test-suite.xml" />
+	<munit:test name="datastream-account-and-contact-process-api-test-suite-get:\accounts\(accountId):datastream-account-and-contact-process-api-configTest" doc:id="7a4ce896-5786-434e-a1b3-5abd6bb6ee2b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Get Account and Contact Process Call" doc:id="d3d29ead-9f8a-4c9b-8ec6-d7e3f5ccb344" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get Account and Contact Process Call" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="3b457946-5da4-4dee-b196-bb333ec049c4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://responses/get-account-details.json','application/json')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="bb37a03b-8c5f-4b77-8004-28a5e1752d38" >
+				<munit:attributes value="#[output application/json --- readUrl('classpath://attributes/get-accounts-attributes.json','application/json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\accounts\(accountId):datastream-account-and-contact-process-api-config" doc:id="8f7c7a94-999b-46d6-81bb-b6933bdce70e" name="get:\accounts\(accountId):datastream-account-and-contact-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="fb94c8ec-8eae-43a8-99c4-aa1951a62ded" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="End of the flow Logger" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="34c7a861-b857-4dcf-83e9-be92d845a1db" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="datastream-account-and-contact-process-api-test-suite-post:\accounts:application\json:datastream-account-and-contact-process-api-configTest" doc:id="c97dec94-920a-4063-8549-469345b617a4" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Post Account and Contact Process Call" doc:id="90808d6b-bd9a-4fe1-a914-9451f5e3ff46" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="619b6779-c9d4-477b-9d28-09022496faa8" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="datastream-account-and-contact-process-api-http-request-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://responses/post-account-response.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="77284dae-b734-4196-a6b9-ca9e16012620">
+				<munit:payload value="#[output application/json --- readUrl('classpath://ds-account-and-contact-exp-api/src/test/resources/requests/post-account.json','application/json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:datastream-account-and-contact-process-api-config" doc:id="b548ebfe-83ff-4c17-a975-f168ed44d4db" name="post:\accounts:application\json:datastream-account-and-contact-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="7368efaf-69bc-4638-bebb-d75e099a9662" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="End of the flow Logger" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="ccbf419c-e5d5-4319-ac97-de8e96e87f49" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="datastream-account-and-contact-process-api-test-suite-get:\contacts\(contactId):datastream-account-and-contact-process-api-configTest" doc:id="abe7db73-3cb6-4976-bee1-a9de84a997f6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Get Account and Contact Process Call" doc:id="8d1632ef-27d3-4cf7-80c8-b3be1fc4b8dc" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3b457946-5da4-4dee-b196-bb333ec049c4" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="datastream-account-and-contact-process-api-http-request-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://responses/get-contact-details.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\contacts\(contactId):datastream-account-and-contact-process-api-config" doc:id="334857c3-4613-4003-8fab-d4c84d22ffeb" name="get:\contacts\(contactId):datastream-account-and-contact-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="7ec999b4-8ae5-4876-aeb6-01fc004ab583" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="End of the flow Logger" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="be8427f6-4431-4761-a61f-4778dee5f403" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="datastream-account-and-contact-process-api-test-suite-post:\contacts:application\json:datastream-account-and-contact-process-api-configTest" doc:id="5143832e-d70e-4b1e-ac5f-a14ded75b330" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Post Account and Contact Process Call" doc:id="82b5ea0c-4b00-436f-a19d-7611776f066a" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="619b6779-c9d4-477b-9d28-09022496faa8" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="datastream-account-and-contact-process-api-http-request-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://responses/post-contact-response.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="41e27d1a-b586-41cd-9796-0a993c92f4bc">
+				<munit:payload value="#[output application/json --- readUrl('classpath://ds-account-and-contact-exp-api/src/test/resources/requests/post-contact.json','application/json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\contacts:application\json:datastream-account-and-contact-process-api-config" doc:id="8569720d-ef09-4c1b-94cc-b14411c75f57" name="post:\contacts:application\json:datastream-account-and-contact-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="138cfc90-7a0f-415b-b1ba-99ceeab88152" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="End of the flow Logger" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="970f4478-ebf8-436e-8191-d2a771736e38" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+</mule>
